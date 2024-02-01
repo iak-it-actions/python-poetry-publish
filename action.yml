@@ -1,0 +1,25 @@
+name: "Setup poetry environment"
+description: "Setup git then python and then poetry environment"
+
+inputs:
+  python-version:
+    description: "python version"
+    required: false
+    default: "3.12"
+
+runs:
+  using: composite
+
+  steps:
+    - name: set up poetry
+      uses: iak-it-actions/python-poetry-setup@v0.0.1
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Mint token
+      id: mint
+      uses: tschm/token-mint-action@v1.0.2
+
+    - name: publish package
+      run: poetry publish --build -u __token__ -p ${{ steps.mint.outputs.api-token }}
+      shell: bash
